@@ -15,6 +15,8 @@ export class PortListComponent implements OnInit, OnDestroy {
   constructor(public postsService: PostsService) {}
 
   ngOnInit() {
+    this.postsService.getPosts();
+    //subscribing to the service
     this.postsSubscription = this.postsService
       .getPostUpdateListener()
       .subscribe((posts: Post[]) => {
@@ -22,6 +24,9 @@ export class PortListComponent implements OnInit, OnDestroy {
       });
   }
 
+  onDelete(id: string) {
+    this.postsService.deletePost(id);
+  }
   ngOnDestroy() {
     this.postsSubscription.unsubscribe();
   }
