@@ -11,18 +11,18 @@ import { HttpClientModule } from "@angular/common/http";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { PortCreateComponent } from "./posts/post-create/post-create.component";
+import { PostCreateComponent as PostCreateComponent } from "./posts/post-create/post-create.component";
 import { HeaderComponent } from "./header/header.component";
-import { PortListComponent } from "./posts/post-list/post-list.component";
+import { PostListComponent } from "./posts/post-list/post-list.component";
 import { from } from "rxjs";
 // mongodb://127.0.0.1:27017/claDB local mongodb URL
 
 @NgModule({
   declarations: [
     AppComponent,
-    PortCreateComponent,
+    PostCreateComponent,
     HeaderComponent,
-    PortListComponent
+    PostListComponent
   ],
   imports: [
     BrowserModule,

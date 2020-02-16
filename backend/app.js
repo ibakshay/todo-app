@@ -19,6 +19,7 @@ app.use(
   })
 );
 
+//middleware will go thru this file from top to bottom until there is next ()
 //writing dummy middleware
 app.use((req, res, next) => {
   console.log("hi from first middleware");
@@ -66,16 +67,19 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content
   });
-  post.save();
+  post.save().then(createdPost => {
+    res.status(201).json({
+      message: "data received sucessfully ",
+      postId: createdPost._id
+    });
+  });
 
   console.log(post);
-  res.status(201).json({
-    message: "data received sucessfully "
-  });
+
 });
 
 app.get("/", (req, res, next) => {
-  res.send("Hello from express");
+  res.send("Hello from akshay");
 });
 
 app.delete("/api/posts/:id", (req, res, next) => {

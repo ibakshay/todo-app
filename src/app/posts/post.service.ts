@@ -7,7 +7,7 @@ import { Content } from "@angular/compiler/src/render3/r3_ast";
 
 @Injectable({ providedIn: "root" })
 export class PostsService {
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
@@ -34,13 +34,14 @@ export class PostsService {
 
   addPost(post: Post) {
     this.httpClient
-      .post<{ message: String }>("http://localhost:3000/api/posts", post)
+      .post<{ message: string, postId: string }>("http://localhost:3000/api/posts", post)
       .subscribe(responseData => {
-        console.log(responseData.message);
+        console.log(responseData);
+        post.id = responseData.postId;
         this.posts.push(post);
         //the next method in the subject is a type of observable in which, all the observers who are subscribed and listening  will get a notification that
         //something has changed to the data
-        //1. observable https://www.youtube.com/watch?v=1tRLveSyNz8&t=3656s
+        //1. observable https://www.youtube.com/watch?v=1tRLveSyNz8&t=3656s)
         this.postsUpdated.next([...this.posts]);
       });
   }
@@ -50,11 +51,8 @@ export class PostsService {
       .delete(`http://localhost:3000/api/posts/${postId}`)
       .subscribe(() => {
         console.log(postId);
-        const updatedPosts = this.posts.filter(post => {
-          return post.id !== postId;
-        });
-        this.posts = updatedPosts;
-
+        const updatesPosts = this.posts.filter(post => post.id !== postId);
+        this.posts = updatesPosts;
         console.log("the updated post is " + JSON.stringify(this.posts));
         this.postsUpdated.next([...this.posts]);
       });
