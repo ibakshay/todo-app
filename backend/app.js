@@ -51,6 +51,7 @@ app.use("/api/posts", (req, res, next) => {
 
 //getting the post contents from the mongodb database
 app.get("/api/posts", (req, res, next) => {
+  console.log("from database");
   Post.find()
     .then(savedPosts => {
       console.log("from database" + savedPosts);
@@ -58,7 +59,7 @@ app.get("/api/posts", (req, res, next) => {
         data: savedPosts
       });
     })
-    .catch(console.log(`Error occurred when fetching saved data from db `));
+    .catch((error) => console.log(`Error occurred when fetching saved data from db `) + error);
 });
 
 //posting single post content to the mongodb database
@@ -75,14 +76,33 @@ app.post("/api/posts", (req, res, next) => {
   });
 
   console.log(post);
-
 });
 
+//editing a single post
+app.put("/api/posts/edit/:id", (req, res, next) => {
+  console.log("akshay is -----------------> " + req.params.id);
+  const post = new Post({
+    _id: req.params.id,
+    title: req.body.title,
+    content: req.body.content
+  })
+  Post.updateOne({
+    _id: req.params.id
+  }, post).then(result => {
+    console.log(result)
+    res.status(200).json({
+      message: "data updated sucessfully ",
+      postId: createdPost._id
+    })
+  })
+})
+
 app.get("/", (req, res, next) => {
+  console.log("hello world");
   res.send("Hello from akshay");
 });
 
-app.delete("/api/posts/:id", (req, res, next) => {
+app.delete("/api/posts/delete/:id", (req, res, next) => {
   console.log(req.params.id);
   Post.deleteOne({
     _id: req.params.id
