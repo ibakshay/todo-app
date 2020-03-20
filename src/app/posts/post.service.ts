@@ -4,10 +4,10 @@ import { map } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { Content } from "@angular/compiler/src/render3/r3_ast";
-
+import { Router } from "@angular/router"
 @Injectable({ providedIn: "root" })
 export class PostsService {
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private router: Router) { }
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
@@ -32,10 +32,13 @@ export class PostsService {
     return this.postsUpdated.asObservable();
   }
 
-  getPost(id: string) {
-    return { ...this.posts.find(p => p.id === id) }
+  // getPost(id: string) {
+  //   return { ...this.posts.find(p => p.id === id) }
+  // }
+  getPost(postId: string) {
+    console.log("hello there")
+    return this.httpClient.get<{ _id: string; title: string; content: string }>(`http://localhost:3000/api/posts/get/${postId}`)
   }
-
   addPost(post: Post) {
     this.httpClient
       .post<{ message: string, postId: string }>("http://localhost:3000/api/posts", post)
@@ -47,14 +50,20 @@ export class PostsService {
         //something has changed to the data
         //1. observable https://www.youtube.com/watch?v=1tRLveSyNz8&t=3656s)
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(["/"]);
       });
   }
 
   editPost(postId: string, post: Post) {
     console.log("post id is " + postId)
     this.httpClient.put(`http://localhost:3000/api/posts/edit/${postId}`, post)
-      .subscribe((responseData) => {
-        console.log(responseData);
+      .subscribe(responseData => {
+        const updatesPosts = [...this.posts]
+        const oldPostIndex = updatesPosts.findIndex(p => p.id === post.id);
+        updatesPosts[oldPostIndex] = post
+        this.posts = updatesPosts;
+        this.postsUpdated.next([...this.posts]);
+        this.router.navigate(["/"]);
       })
   }
 
