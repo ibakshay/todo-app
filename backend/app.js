@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const postsRoutes = require("./routes/posts")
 const mongoose = require("mongoose");
+const path = require("path")
 const app = express();
 
 mongoose
@@ -19,6 +20,7 @@ app.use(
     extended: false
   })
 );
+app.use("/images", express.static(path.join("backend/images")))
 
 //middleware will go thru this file from top to bottom until there is next ()
 //writing dummy middleware

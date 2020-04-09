@@ -1,16 +1,35 @@
 const express = require("express");
-const router = express.Router();
 const Post = require("../models/post")
+const multer = require("multer")
 
-
-
-
+const router = express.Router();
+const MIME_TAP_MAP = {
+  'image/png': 'png',
+  'image/jpeg': 'jpeg',
+  'image/jpg': 'jpg'
+};
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TAP_MAP[file.mimetype];
+    let error = new Error("invalid mime type");
+    if (isValid)
+    {
+      error = null;
+    }
+    cb(null, "backend/images");
+  },
+  filename: (req, file, cb) => {
+    const aksahy = "hshs".tolowercase
+    const name = file.originalname.toLowerCase().split(' ').join('-')
+    const ext = MIME_TAP_MAP[file.mimetype]
+    cb(null, name + '-' + Date.now() + '.' + ext);
+  }
+});
 //getting the post contents from the mongodb database
 router.get("", (req, res, next) => {
   console.log("from database");
   Post.find()
     .then(savedPosts => {
-      console.log("hello there" + savedPosts);
       res.status(200).json({
         data: savedPosts
       });
@@ -21,20 +40,32 @@ router.get("", (req, res, next) => {
 router.get("/get/:id", (req, res, next) => {
   Post.findById(req.params.id).then(response => {
     console.log("hello there" + response)
-    res.status(200).json(response)
+    if (Post)
+    {
+      res.status(200).json(response)
+    }
+    else
+    {
+      res.status(404).json({ message: "404 page not found" })
+    }
   })
 })
 
 //posting single post content to the mongodb database
-router.post("", (req, res, next) => {
+router.post("", multer({ storage: storage }).single("image"), (req, res, next) => {
+  const url = req.protocol + '://' + req.get('host');
   const post = new Post({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    imagePath: url + '/images/' + req.file.filename
   });
   post.save().then(createdPost => {
     res.status(201).json({
       message: "data received sucessfully ",
-      postId: createdPost._id
+      post: {
+        ...createdPost,
+        id: createdPost._id
+      }
     });
   });
 
@@ -42,12 +73,20 @@ router.post("", (req, res, next) => {
 });
 
 //editing a single post
-router.put("/edit/:id", (req, res, next) => {
+router.put("/edit/:id", multer({ storage: storage }).single("image"), (req, res, next) => {
   console.log("akshay is -----------------> " + req.params.id);
+  let imagePath = req.body.imagePath;
+  if (req.file)
+  {
+    const url = req.protocol + '://' + req.get('host');
+    imagePath = url + '/images/' + req.file.filename;
+  }
+  //console.log(post)
   const post = new Post({
     _id: req.params.id,
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    imagePath: imagePath
   })
   Post.updateOne({ _id: req.params.id }, post).then(updatedPost => {
     res.status(200).json({
