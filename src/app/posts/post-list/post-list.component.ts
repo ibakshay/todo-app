@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Post } from "../post.model";
 import { PostsService } from "../post.service";
 import { Subscription } from "rxjs";
+import { PageEvent } from '@angular/material';
 
 @Component({
   selector: "app-post-list",
@@ -10,6 +11,10 @@ import { Subscription } from "rxjs";
 })
 export class PostListComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
+  totalPosts = 100;
+  postsPerPage = 10;
+  currentPage = 1;
+  pageSizeOptions = [2, 5, 10, 20]
   isLoading = false;
   private postsSubscription: Subscription;
 
@@ -17,7 +22,7 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
-    this.postsService.getPosts();
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
     //subscribing to the service
     this.postsSubscription = this.postsService
       .getPostUpdateListener()
@@ -26,7 +31,12 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       });
   }
-
+  onChangePage(pageData: PageEvent) {
+    this.currentPage = pageData.pageIndex + 1;
+    this.postsPerPage = pageData.pageSize;
+    console.log(`AKSHAY IS A GOOD BOY ${JSON.stringify(pageData)}`);
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
+  }
   onDelete(id: string) {
     this.postsService.deletePost(id);
   }

@@ -12,9 +12,10 @@ export class PostsService {
   private postsUpdated = new Subject<Post[]>();
 
   //subscribing to the server
-  getPosts() {
+  getPosts(postsPerPage: number, currentPage: number) {
+    const queryParams = `?pagesize=${postsPerPage}&currentpage=${currentPage}`;
     this.httpClient
-      .get<{ data: any }>("http://localhost:3000/api/posts")
+      .get<{ data: any }>(`http://localhost:3000/api/posts${queryParams}`)
       .pipe(
         map(savedPostData => {
           return savedPostData.data.map(post => {

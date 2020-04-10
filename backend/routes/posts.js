@@ -27,13 +27,21 @@ const storage = multer.diskStorage({
 });
 //getting the post contents from the mongodb database
 router.get("", (req, res, next) => {
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.currentpage;
+  console.log(req.query);
+  const postQuery = Post.find();
+  if (pageSize && currentPage)
+  {
+    console.log("akshay is a google boy")
+    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
   console.log("from database");
-  Post.find()
-    .then(savedPosts => {
-      res.status(200).json({
-        data: savedPosts
-      });
-    })
+  postQuery.then(savedPosts => {
+    res.status(200).json({
+      data: savedPosts
+    });
+  })
     .catch((error) => console.log(`Error occurred when fetching saved data from db `) + error);
 });
 
