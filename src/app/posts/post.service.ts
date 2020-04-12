@@ -49,7 +49,7 @@ export class PostsService {
     this.httpClient
       .post<any>("http://localhost:3000/api/posts", postData)
       .subscribe(responseData => {
-        const responsePost: Post = { id: responseData.post.id, title: post.title, content: post.content, imagePath: responseData.post.imagePath }
+        const responsePost: Post = { id: responseData.post.id, title: post.title, content: post.content, imagePath!: responseData.post.imagePath }
         console.log(responseData);
         post.id = responseData.postId;
         this.posts.push(post);
@@ -68,7 +68,9 @@ export class PostsService {
       postData.append("id", post.id);
       postData.append("title", post.title);
       postData.append("content", post.content);
-      postData.append("image", post.imagePath, post.title);
+      if (post.imagePath) {
+        postData.append("image", post.imagePath, post.title);
+      }
     }
     else {
       postData = {

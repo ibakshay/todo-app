@@ -16,7 +16,7 @@ export class PostCreateComponent implements OnInit {
   post: Post;
   isLoading = false;
   form: FormGroup;
-  imagePreview: string
+  imagePreview: string;
 
   constructor(public postsService: PostsService, public route: ActivatedRoute) { }
 
@@ -24,10 +24,11 @@ export class PostCreateComponent implements OnInit {
     this.form = new FormGroup({
       'title': new FormControl(null, { validators: [Validators.required, Validators.minLength(3)] }),
       'content': new FormControl(null, { validators: [Validators.required] }),
-      'image': new FormControl(null, { validators: [Validators.required], asyncValidators: [mimeType] })
+      'image': new FormControl(null)
     });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
+        console.log("hello world")
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
         this.isLoading = true;
@@ -35,10 +36,9 @@ export class PostCreateComponent implements OnInit {
           this.isLoading = false;
           console.log("can you hear me" + JSON.stringify(postData))
           this.post = { id: postData._id, title: postData.title, content: postData.content, imagePath: postData.imagePath }
-          this.form.setValue({
+          this.form.patchValue({
             'title': postData.title,
-            'content': postData.content,
-            'image': postData.imagePath
+            'content': postData.content
           })
         });
       } else {

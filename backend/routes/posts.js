@@ -62,10 +62,18 @@ router.get("/get/:id", (req, res, next) => {
 //posting single post content to the mongodb database
 router.post("", multer({ storage: storage }).single("image"), (req, res, next) => {
   const url = req.protocol + '://' + req.get('host');
-  const post = new Post({
+  let post = "";
+  if (req.body.filename)
+  {
+    post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: url + '/images/' + req.file.filename
+    });
+  }
+  post = new Post({
     title: req.body.title,
-    content: req.body.content,
-    imagePath: url + '/images/' + req.file.filename
+    content: req.body.content
   });
   post.save().then(createdPost => {
     res.status(201).json({

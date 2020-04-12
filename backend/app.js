@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const postsRoutes = require("./routes/posts")
+const usersRoutes = require("./routes/auth")
 const mongoose = require("mongoose");
 const path = require("path")
 const app = express();
@@ -61,5 +62,6 @@ app.get("/", (req, res, next) => {
 
 
 app.use("/api/posts", postsRoutes);
+app.use("/api/user", usersRoutes);
 
 module.exports = app;
