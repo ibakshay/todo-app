@@ -11,7 +11,6 @@ export class PostsService {
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
-  //subscribing to the server
   getPosts(postsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postsPerPage}&currentpage=${currentPage}`;
     this.httpClient
@@ -38,8 +37,8 @@ export class PostsService {
   // }
   getPost(postId: string) {
     console.log("hello there")
-    return this.httpClient.get<{ _id: string, title: string, content: string, imagePath: string }>(`http://localhost:3000/api/posts/get/${postId}`)
-  }
+    // tslint:disable-next-line: max-line-length
+    return this.httpClient.get<{ _id: string, title: string, content: string, imagePath: string }>(`http://localhost:3000/api/posts/get/${postId}`)};
   addPost(post: Post, image: File) {
     console.log("can you hear me")
     const postData = new FormData();
@@ -49,13 +48,15 @@ export class PostsService {
     this.httpClient
       .post<any>("http://localhost:3000/api/posts", postData)
       .subscribe(responseData => {
-        const responsePost: Post = { id: responseData.post.id, title: post.title, content: post.content, imagePath!: responseData.post.imagePath }
+        // tslint:disable-next-line: max-line-length
+        const responsePost: Post = { id: responseData.post.id, title: post.title, content: post.content, imagePath!: responseData.post.imagePath };
         console.log(responseData);
         post.id = responseData.postId;
         this.posts.push(post);
-        //the next method in the subject is a type of observable in which, all the observers who are subscribed and listening  will get a notification that
-        //something has changed to the data
-        //1. observable https://www.youtube.com/watch?v=1tRLveSyNz8&t=3656s)
+        // tslint:disable-next-line: max-line-length
+        // the next method in the subject is a type of observable in which, all the observers who are subscribed and listening  will get a notification that
+        // something has changed to the data
+        // 1. observable https://www.youtube.com/watch?v=1tRLveSyNz8&t=3656s)
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(["/"]);
       });
