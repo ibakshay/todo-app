@@ -7,12 +7,12 @@ const path = require("path")
 const app = express();
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/node-angular")
+  .connect("mongodb+srv://ibakshay:WtYhggoQdrCVGQBN@cluster0-thkyt.mongodb.net/test?retryWrites=true&w=majority")
   .then(() => {
     console.log("connected to mongodb");
   })
-  .catch(() => {
-    console.log("connection failed");
+  .catch((error) => {
+    console.log(`connection failed ${ error }`);
   });
 //b5VZQfMxNk3R29FG
 app.use(bodyParser.json());

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm, FormGroup, FormControl, Validators } from "@angular/forms";
+import { AuthService } from '../auth.service';
 
 @Component({
   templateUrl: "./login.component.html",
@@ -16,10 +17,20 @@ export class LoginComponent {
     });
   }
 
+  constructor(public authservice: AuthService) {
+
+  }
+
+
 
   onLogin(form: NgForm) {
 
     console.log(form)
+    if (form.invalid) {
+      return;
+    }
+    this.authservice.login(form.value.email, form.value.password)
+
   }
 
 }
