@@ -1,6 +1,7 @@
 const express = require("express");
 const Post = require("../models/post")
 const multer = require("multer")
+const checkAuth = require("../middleware/check-auth")
 
 const router = express.Router();
 const MIME_TAP_MAP = {
@@ -60,7 +61,7 @@ router.get("/get/:id", (req, res, next) => {
 })
 
 //posting single post content to the mongodb database
-router.post("", multer({ storage: storage }).single("image"), (req, res, next) => {
+router.post("", checkAuth, multer({ storage: storage }).single("image"), (req, res, next) => {
   const url = req.protocol + '://' + req.get('host');
   let post = "";
   if (req.body.filename)
@@ -89,7 +90,7 @@ router.post("", multer({ storage: storage }).single("image"), (req, res, next) =
 });
 
 //editing a single post
-router.put("/edit/:id", multer({ storage: storage }).single("image"), (req, res, next) => {
+router.put("/edit/:id", checkAuth, multer({ storage: storage }).single("image"), (req, res, next) => {
   console.log("akshay is -----------------> " + req.params.id);
   let imagePath = req.body.imagePath;
   if (req.file)
@@ -112,7 +113,7 @@ router.put("/edit/:id", multer({ storage: storage }).single("image"), (req, res,
   }).catch(e => { console.log("the erroe when updating the post is " + e) })
 })
 
-router.delete("/delete/:id", (req, res, next) => {
+router.delete("/delete/:id", checkAuth, (req, res, next) => {
   console.log(req.params.id);
   Post.deleteOne({
     _id: req.params.id

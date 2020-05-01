@@ -9,7 +9,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { MatPaginatorModule } from "@angular/material"
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -19,6 +19,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { HeaderComponent } from "./header/header.component";
 import { PostListComponent } from "./posts/post-list/post-list.component";
 import { from } from "rxjs";
+import { AuthInterceptor } from './auth/auth-interceptor';
 // mongodb://127.0.0.1:27017/claDB local mongodb URL
 
 @NgModule({
@@ -45,7 +46,7 @@ import { from } from "rxjs";
     MatPaginatorModule,
     FormsModule
   ],
-  providers: [],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
