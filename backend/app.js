@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const path = require("path")
 const app = express();
 
+
 mongoose
   .connect("mongodb+srv://ibakshay:WtYhggoQdrCVGQBN@cluster0-thkyt.mongodb.net/test?retryWrites=true&w=majority")
   .then(() => {

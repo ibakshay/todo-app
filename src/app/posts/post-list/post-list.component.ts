@@ -34,11 +34,11 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       });
     //this.userIsAuthenticated = this.authService.getAuthUserIsAuthenticated()
-    console.log("post-list component loaded " + this.userIsAuthenticated)
     this.authListenerSubs = this.authService.getAuthStatusListener()
       .subscribe((userIsAuthenticated) => {
         this.userIsAuthenticated = userIsAuthenticated
       })
+    console.log("post-list component loaded " + this.userIsAuthenticated)
   }
 
   onChangePage(pageData: PageEvent) {
