@@ -27,11 +27,11 @@ const storage = multer.diskStorage({
   }
 });
 //getting the post contents from the mongodb database
-router.get("", (req, res, next) => {
+router.get("", checkAuth, (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.currentpage;
   console.log(req.query);
-  const postQuery = Post.find();
+  const postQuery = Post.find({ creator: req.userData.userId });
   if (pageSize && currentPage)
   {
     console.log("akshay is a google boy")
@@ -69,13 +69,19 @@ router.post("", checkAuth, multer({ storage: storage }).single("image"), (req, r
     post = new Post({
       title: req.body.title,
       content: req.body.content,
-      imagePath: url + '/images/' + req.file.filename
+      imagePath: url + '/images/' + req.file.filename,
+      creator: req.userData.userId
     });
   }
-  post = new Post({
-    title: req.body.title,
-    content: req.body.content
-  });
+  else
+  {
+    post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      creator: req.userData.userId
+    });
+  }
+
   post.save().then(createdPost => {
     res.status(201).json({
       message: "data received sucessfully ",
@@ -105,7 +111,7 @@ router.put("/edit/:id", checkAuth, multer({ storage: storage }).single("image"),
     content: req.body.content,
     imagePath: imagePath
   })
-  Post.updateOne({ _id: req.params.id }, post).then(updatedPost => {
+  Post.updateOne({ _id: req.params.id, creator: req.userData.userId }, post).then(updatedPost => {
     res.status(200).json({
       message: "data updated sucessfully ",
       postId: updatedPost._id

@@ -18,11 +18,12 @@ export class PostsService {
       .pipe(
         map(savedPostData => {
           return savedPostData.data.map(post => {
-            return { title: post.title, content: post.content, id: post._id, imagePath: post.imagePath };
+            return { title: post.title, content: post.content, id: post._id, imagePath: post.imagePath, creator: post.creator };
           });
         })
       )
       .subscribe(transformedSavedPostData => {
+        console.log(transformedSavedPostData)
         this.posts = transformedSavedPostData;
         this.postsUpdated.next([...this.posts]);
       });
@@ -38,7 +39,14 @@ export class PostsService {
   getPost(postId: string) {
     console.log("hello there")
     // tslint:disable-next-line: max-line-length
-    return this.httpClient.get<{ _id: string, title: string, content: string, imagePath: string }>(`http://localhost:3000/api/posts/get/${postId}`)};
+    return this.httpClient.get<{
+      _id: string,
+      title: string,
+      content: string,
+      imagePath: string
+    }>(`http://localhost:3000/api/posts/get/${postId}`)
+  };
+
   addPost(post: Post, image: File) {
     console.log("can you hear me")
     const postData = new FormData();
