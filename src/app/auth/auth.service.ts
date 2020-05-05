@@ -31,8 +31,23 @@ export class AuthService {
 
   createUser(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
-    this.httpClient.post<any>("http://localhost:3000/api/user/signup", authData).subscribe(response => {
+    this.httpClient.post<{ token: string, expiresIn: number }>("http://localhost:3000/api/user/signup", authData).subscribe(response => {
       console.log(response)
+      this.token = response.token
+      if (this.token) {
+        const expiresIn = response.expiresIn
+        this.setAuthTimer(expiresIn)
+        this.userIsAuthenticated = true
+        this.authStatusListener.next(true)
+        const now = new Date()
+        const expirationDate = new Date(now.getTime() + expiresIn * 1000)
+        console.log("expirationDate: " + expirationDate)
+        this.saveAuthData(this.token, expirationDate)
+        this.router.navigate(['/'])
+      }
+    }, error => {
+      console.log(error)
+      this.authStatusListener.next(false)
     })
 
   }
@@ -53,6 +68,9 @@ export class AuthService {
         this.router.navigate(['/'])
       }
 
+    }, error => {
+      console.log(error)
+      this.authStatusListener.next(false)
     })
 
   }
