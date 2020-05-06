@@ -43,7 +43,7 @@ router.get("", checkAuth, (req, res, next) => {
       data: savedPosts
     });
   })
-    .catch((error) => console.log(`Error occurred when fetching saved data from db `) + error);
+    .catch((error) => res.status(500).json({ message: "failed when fetching all the posts" }));
 });
 
 router.get("/get/:id", (req, res, next) => {
@@ -90,6 +90,8 @@ router.post("", checkAuth, multer({ storage: storage }).single("image"), (req, r
         id: createdPost._id
       }
     });
+  }).catch(err => {
+    res.status(500).json({ message: 'Creating a post failed' })
   });
 
   console.log(post);
@@ -116,7 +118,7 @@ router.put("/edit/:id", checkAuth, multer({ storage: storage }).single("image"),
       message: "data updated sucessfully ",
       postId: updatedPost._id
     })
-  }).catch(e => { console.log("the erroe when updating the post is " + e) })
+  }).catch(e => { res.status(500).json({ message: 'error occured when updating the post, please try again :) ' }) })
 })
 
 router.delete("/delete/:id", checkAuth, (req, res, next) => {
