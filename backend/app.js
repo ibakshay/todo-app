@@ -8,7 +8,7 @@ const app = express();
 
 
 mongoose
-  .connect("mongodb+srv://ibakshay:WtYhggoQdrCVGQBN@cluster0-thkyt.mongodb.net/test?retryWrites=true&w=majority")
+  .connect("mongodb+srv://ibakshay:" + process.env.MONGO_ATLAS_PASSWORD + "@cluster0-thkyt.mongodb.net/test?retryWrites=true&w=majority")
   .then(() => {
     console.log("connected to mongodb");
   })
@@ -37,6 +37,7 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
+  console.log("hi from third middleware");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",

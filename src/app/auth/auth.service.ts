@@ -4,8 +4,10 @@ import { map } from "rxjs/operators";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { Content } from "@angular/compiler/src/render3/r3_ast";
 import { Router } from "@angular/router"
-import { AuthData } from './auth-data.model';
+import { AuthData } from './auth-data.model'
+import { environment } from "../../environments/environment"
 
+const BACKEND_URL = `${environment.baseUrl}/user`
 @Injectable({ providedIn: "root" })
 export class AuthService {
   private token: string
@@ -31,7 +33,7 @@ export class AuthService {
 
   createUser(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
-    this.httpClient.post<{ token: string, expiresIn: number }>("http://localhost:3000/api/user/signup", authData).subscribe(response => {
+    this.httpClient.post<{ token: string, expiresIn: number }>(BACKEND_URL + "/signup", authData).subscribe(response => {
       console.log(response)
       this.token = response.token
       if (this.token) {
@@ -53,7 +55,7 @@ export class AuthService {
   }
   login(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
-    this.httpClient.post<{ token: string, expiresIn: number }>("http://localhost:3000/api/user/login", authData).subscribe(response => {
+    this.httpClient.post<{ token: string, expiresIn: number }>(BACKEND_URL + "/login", authData).subscribe(response => {
       this.token = response.token;
       console.log("Iam here")
       if (this.token) {

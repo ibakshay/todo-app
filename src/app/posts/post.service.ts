@@ -5,16 +5,21 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { Content } from "@angular/compiler/src/render3/r3_ast";
 import { Router } from "@angular/router"
+import { environment } from "../../environments/environment"
+
+const BACKEND_URL = `${environment.baseUrl}/posts`
 @Injectable({ providedIn: "root" })
 export class PostsService {
   constructor(private httpClient: HttpClient, private router: Router) { }
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
+
+
   getPosts(postsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postsPerPage}&currentpage=${currentPage}`;
     this.httpClient
-      .get<{ data: any }>(`http://localhost:3000/api/posts${queryParams}`)
+      .get<{ data: any }>(`${BACKEND_URL}${queryParams}`)
       .pipe(
         map(savedPostData => {
           return savedPostData.data.map(post => {
@@ -44,7 +49,7 @@ export class PostsService {
       title: string,
       content: string,
       imagePath: string
-    }>(`http://localhost:3000/api/posts/get/${postId}`)
+    }>(`${BACKEND_URL}/get/${postId}`)
   };
 
   addPost(post: Post, image: File) {
@@ -54,7 +59,7 @@ export class PostsService {
     postData.append("content", post.content);
     postData.append("image", post.title)
     this.httpClient
-      .post<any>("http://localhost:3000/api/posts", postData)
+      .post<any>(BACKEND_URL, postData)
       .subscribe(responseData => {
         // tslint:disable-next-line: max-line-length
         const responsePost: Post = { id: responseData.post.id, title: post.title, content: post.content, imagePath!: responseData.post.imagePath };
@@ -90,7 +95,7 @@ export class PostsService {
       }
     }
     console.log("post id is " + postId)
-    this.httpClient.put(`http://localhost:3000/api/posts/edit/${postId}`, postData)
+    this.httpClient.put(`${BACKEND_URL}/edit/${postId}`, postData)
       .subscribe(responseData => {
         const updatesPosts = [...this.posts]
         const oldPostIndex = updatesPosts.findIndex(p => p.id === post.id);
@@ -109,7 +114,7 @@ export class PostsService {
 
   deletePost(postId: string) {
     this.httpClient
-      .delete(`http://localhost:3000/api/posts/delete/${postId}`)
+      .delete(`${BACKEND_URL}/delete/${postId}`)
       .subscribe(() => {
         console.log(postId);
         const updatesPosts = this.posts.filter(post => post.id !== postId);
