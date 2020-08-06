@@ -20,6 +20,6 @@ jobs:
           path-to-cla-document: 'https://github.com/cla-assistant/github-action/blob/master/SAPCLA.md'
           # branch should not be protected
           branch: 'master'
-          allowlist: user1,user2
+          allowlist: user1,user2, dependabot[bot]
           empty-commit-flag: false
           blockchain-storage-flag: false
